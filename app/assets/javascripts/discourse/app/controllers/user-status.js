@@ -5,6 +5,11 @@ import { inject as service } from "@ember/service";
 import { popupAjaxError } from "discourse/lib/ajax-error";
 import bootbox from "bootbox";
 import discourseComputed from "discourse-common/utils/decorators";
+import ItsATrap from "@discourse/itsatrap";
+import {
+  TIME_SHORTCUT_TYPES,
+  timeShortcuts,
+} from "discourse/lib/time-shortcut";
 
 export default Controller.extend(ModalFunctionality, {
   userStatusService: service("user-status"),
@@ -12,6 +17,8 @@ export default Controller.extend(ModalFunctionality, {
   emoji: null,
   description: null,
   showDeleteButton: false,
+  timeShortcuts: null,
+  _itsatrap: null,
 
   onShow() {
     const status = this.currentUser.status;
@@ -19,12 +26,33 @@ export default Controller.extend(ModalFunctionality, {
       emoji: status?.emoji,
       description: status?.description,
       showDeleteButton: !!status,
+      timeShortcuts: this._buildTimeShortcuts(),
     });
+
+    this.set("_itsatrap", new ItsATrap());
+  },
+
+  onClose() {
+    this._itsatrap.destroy();
+    this.set("_itsatrap", null);
+    this.set("timeShortcuts", null);
   },
 
   @discourseComputed("emoji", "description")
   statusIsSet(emoji, description) {
     return !!emoji && !!description;
+  },
+
+  @discourseComputed
+  customTimeShortcutLabels() {
+    const labels = {};
+    labels[TIME_SHORTCUT_TYPES.NONE] = "time_shortcut.never";
+    return labels;
+  },
+
+  @discourseComputed
+  hiddenTimeShortcutOptions() {
+    return [TIME_SHORTCUT_TYPES.LAST_CUSTOM];
   },
 
   @action
@@ -33,6 +61,11 @@ export default Controller.extend(ModalFunctionality, {
       .clear()
       .then(() => this.send("closeModal"))
       .catch((e) => this._handleError(e));
+  },
+
+  @action
+  onTimeSelected() {
+    console.log("time was selected");
   },
 
   @action
@@ -52,5 +85,11 @@ export default Controller.extend(ModalFunctionality, {
     } else {
       popupAjaxError(e);
     }
+  },
+
+  _buildTimeShortcuts() {
+    const timezone = this.currentUser.timezone;
+    const shortcuts = timeShortcuts(timezone);
+    return [shortcuts.oneHour(), shortcuts.twoHours(), shortcuts.tomorrow()];
   },
 });

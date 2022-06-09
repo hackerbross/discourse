@@ -3,6 +3,18 @@
     <div class="control-group">
       {{user-status-picker emoji=emoji description=description}}
     </div>
+    <div class="control-group control-group-remove-status">
+      <label class="control-label">
+        {{i18n "user_status.remove_status"}}
+      </label>
+      {{time-shortcut-picker
+        timeShortcuts=timeShortcuts
+        hiddenOptions=hiddenTimeShortcutOptions
+        onTimeSelected=(action "onTimeSelected")
+        customLabels=customTimeShortcutLabels
+        _itsatrap=_itsatrap
+      }}
+    </div>
     <div class="modal-footer control-group">
       {{d-button
         label="user_status.save"
