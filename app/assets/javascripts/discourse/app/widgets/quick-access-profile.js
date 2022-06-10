@@ -4,6 +4,8 @@ import QuickAccessItem from "discourse/widgets/quick-access-item";
 import QuickAccessPanel from "discourse/widgets/quick-access-panel";
 import { createWidgetFrom } from "discourse/widgets/widget";
 import showModal from "discourse/lib/show-modal";
+import { iconHTML } from "discourse-common/lib/icon-library";
+import RawHtml from "discourse/widgets/raw-html";
 
 const _extraItems = [];
 
@@ -27,20 +29,11 @@ createWidgetFrom(QuickAccessItem, "user-status-item", {
   tagName: "li.user-status",
 
   html() {
-    const action = "hideMenuAndSetStatus";
-    const userStatus = this.currentUser.status;
-    if (userStatus) {
-      return this.attach("flat-button", {
-        action,
-        emoji: userStatus.emoji,
-        translatedLabel: userStatus.description,
-      });
+    const status = this.currentUser.status;
+    if (status) {
+      return this._editStatusButton(status);
     } else {
-      return this.attach("flat-button", {
-        action,
-        icon: "plus-circle",
-        label: "user_status.set_custom_status",
-      });
+      return this._setStatusButton();
     }
   },
 
@@ -49,6 +42,28 @@ createWidgetFrom(QuickAccessItem, "user-status-item", {
     showModal("user-status", {
       title: "user_status.set_custom_status",
       modalClass: "user-status",
+    });
+  },
+
+  _setStatusButton() {
+    return this.attach("flat-button", {
+      action: "hideMenuAndSetStatus",
+      icon: "plus-circle",
+      label: "user_status.set_custom_status",
+    });
+  },
+
+  _editStatusButton(status) {
+    const icon = iconHTML("envelope");
+    const timerLabel = new RawHtml({
+      html: `<span class="user-status-timer">${icon}60m</span>`,
+    });
+
+    return this.attach("flat-button", {
+      action: "hideMenuAndSetStatus",
+      emoji: status.emoji,
+      translatedLabel: status.description,
+      contents: timerLabel,
     });
   },
 });

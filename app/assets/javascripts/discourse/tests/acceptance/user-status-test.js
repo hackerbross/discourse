@@ -226,11 +226,10 @@ acceptance("User Status", function (needs) {
 
     await click(".header-dropdown-toggle.current-user");
     await click(".menu-links-row .user-preferences-link");
-    assert.equal(
+    assert.ok(
       query(
-        "div.quick-access-panel li.user-status span.d-button-label .user-status-timer"
-      ).innerText,
-      "60m",
+        "div.quick-access-panel li.user-status .user-status-timer"
+      ).innerText.includes("60m"),
       "shows user status timer on the menu"
     );
   });
