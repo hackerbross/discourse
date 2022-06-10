@@ -8,7 +8,7 @@ export default class UserStatusService extends Service {
     const data = {
       emoji: status.emoji,
       description: status.description,
-      ends_at: status.endsAt.toISOString(),
+      ends_at: status.endsAt?.toISOString(),
     };
 
     await ajax({
