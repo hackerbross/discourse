@@ -654,9 +654,15 @@ class User < ActiveRecord::Base
   end
 
   def publish_user_status(status)
-    payload = status ?
-                { description: status.description, emoji: status.emoji } :
-                nil
+    if status
+      payload = {
+        description: status.description,
+        emoji: status.emoji,
+        endsAt: status.ends_at
+      }
+    else
+      payload = nil
+    end
 
     MessageBus.publish("/user-status/#{id}", payload, user_ids: [id])
   end
