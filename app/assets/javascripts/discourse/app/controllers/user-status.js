@@ -16,6 +16,8 @@ export default Controller.extend(ModalFunctionality, {
 
   emoji: null,
   description: null,
+  endsAt: null,
+
   showDeleteButton: false,
   timeShortcuts: null,
   _itsatrap: null,
@@ -25,6 +27,7 @@ export default Controller.extend(ModalFunctionality, {
     this.setProperties({
       emoji: status?.emoji,
       description: status?.description,
+      endsAt: status?.endsAt,
       showDeleteButton: !!status,
       timeShortcuts: this._buildTimeShortcuts(),
     });
@@ -64,13 +67,17 @@ export default Controller.extend(ModalFunctionality, {
   },
 
   @action
-  onTimeSelected() {
-    console.log("time was selected");
+  onTimeSelected(_, time) {
+    this.set("endsAt", time);
   },
 
   @action
   saveAndClose() {
-    const status = { description: this.description, emoji: this.emoji };
+    const status = {
+      description: this.description,
+      emoji: this.emoji,
+      endsAt: this.endsAt,
+    };
     this.userStatusService
       .set(status)
       .then(() => {

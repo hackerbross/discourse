@@ -5,10 +5,16 @@ export default class UserStatusService extends Service {
   @service appEvents;
 
   async set(status) {
+    const data = {
+      emoji: status.emoji,
+      description: status.description,
+      endsAt: status.endsAt.toISOString(),
+    };
+
     await ajax({
       url: "/user-status.json",
       type: "PUT",
-      data: status,
+      data,
     });
 
     this.currentUser.set("status", status);
