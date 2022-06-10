@@ -102,7 +102,11 @@ acceptance("User Status", function (needs) {
     this.siteSettings.enable_user_status = true;
 
     updateCurrentUser({
-      status: { description: userStatus, emoji: userStatusEmoji },
+      status: {
+        description: userStatus,
+        emoji: userStatusEmoji,
+        endsAt: new Date("January 1, 2100 09:35:00"),
+      },
     });
 
     await visit("/");
@@ -118,6 +122,12 @@ acceptance("User Status", function (needs) {
       userStatus,
       "status description is shown"
     );
+    assert.equal(
+      query("..date-picker").value,
+      "2100-01-01",
+      "endsAt date is shown"
+    );
+    assert.equal(query(".time-input").value, "09:35", "endsAt time is shown");
   });
 
   test("emoji picking", async function (assert) {
