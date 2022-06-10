@@ -54,16 +54,23 @@ createWidgetFrom(QuickAccessItem, "user-status-item", {
   },
 
   _editStatusButton(status) {
-    const icon = iconHTML("envelope");
-    const timerLabel = new RawHtml({
-      html: `<span class="user-status-timer">${icon}60m</span>`,
-    });
-
-    return this.attach("flat-button", {
+    const menuButton = {
       action: "hideMenuAndSetStatus",
       emoji: status.emoji,
       translatedLabel: status.description,
-      contents: timerLabel,
+    };
+
+    if (!status.ends_at) {
+      menuButton.contents = this._statusTimerLabel(status.ends_at);
+    }
+
+    return this.attach("flat-button", menuButton);
+  },
+
+  _statusTimerLabel() {
+    const icon = iconHTML("clock");
+    return new RawHtml({
+      html: `<span class="user-status-timer">${icon}60m</span>`,
     });
   },
 });
