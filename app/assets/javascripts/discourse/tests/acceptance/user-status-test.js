@@ -213,6 +213,28 @@ acceptance("User Status", function (needs) {
     assert.notOk(exists(".header-dropdown-toggle .user-status-background"));
   });
 
+  test("setting user status with auto removing timer", async function (assert) {
+    this.siteSettings.enable_user_status = true;
+
+    await visit("/");
+    await openUserStatusModal();
+
+    await fillIn(".user-status-description", userStatus);
+    await pickEmoji(userStatusEmoji);
+    await click("#tap_tile_one_hour");
+    await click(".btn-primary"); // save
+
+    await click(".header-dropdown-toggle.current-user");
+    await click(".menu-links-row .user-preferences-link");
+    assert.equal(
+      query(
+        "div.quick-access-panel li.user-status span.d-button-label .user-status-timer"
+      ).innerText,
+      "60m",
+      "shows user status timer on the menu"
+    );
+  });
+
   test("it's impossible to set status without description", async function (assert) {
     this.siteSettings.enable_user_status = true;
 
