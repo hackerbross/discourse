@@ -218,7 +218,7 @@ acceptance(
 );
 
 acceptance(
-  "Managing Group Email Settings - SMTP and IMAP Enabled - Settings Preflled",
+  "Managing Group Email Settings - SMTP and IMAP Enabled - Settings Prefilled",
   function (needs) {
     needs.user();
     needs.settings({ enable_smtp: true, enable_imap: true });
@@ -236,7 +236,7 @@ acceptance(
             visible: true,
             public_admission: true,
             public_exit: false,
-            flair_url: "fa-adjust",
+            flair_url: "fa-circle-half-stroke",
             is_group_owner: true,
             mentionable: true,
             messageable: true,
